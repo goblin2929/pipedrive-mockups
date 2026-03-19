@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pipedrive Creative Library — Mockup</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0f1117; color: #e4e4e7; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; border-bottom: 1px solid #1e2028; background: #13151c; }
+  .topbar-left { display: flex; align-items: center; gap: 16px; }
+  .logo { font-size: 15px; font-weight: 700; color: #01aac1; letter-spacing: -0.3px; }
+  .logo span { color: #6b7280; font-weight: 400; }
+  .breadcrumb { font-size: 13px; color: #6b7280; }
+  .breadcrumb strong { color: #e4e4e7; }
+  .topbar-right { display: flex; gap: 10px; }
+  .btn-sm { padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 500; border: 1px solid #2a2d37; background: #1a1d27; color: #a1a1aa; cursor: pointer; }
+  .btn-sm.active { background: #01aac1; color: #fff; border-color: #01aac1; }
+
+  .filterbar { display: flex; align-items: center; gap: 10px; padding: 14px 32px; border-bottom: 1px solid #1e2028; background: #13151c; flex-wrap: wrap; }
+  .filter-chip { display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 500; border: 1px solid #2a2d37; background: #1a1d27; color: #a1a1aa; cursor: pointer; }
+  .filter-chip.selected { border-color: #01aac1; color: #01aac1; background: rgba(1,170,193,0.08); }
+  .filter-chip .dot { width: 6px; height: 6px; border-radius: 50%; }
+  .search-box { margin-left: auto; padding: 6px 14px; border-radius: 6px; font-size: 12px; border: 1px solid #2a2d37; background: #1a1d27; color: #e4e4e7; width: 260px; }
+  .search-box::placeholder { color: #52525b; }
+
+  .statsbar { display: flex; gap: 24px; padding: 12px 32px; border-bottom: 1px solid #1e2028; background: #0f1117; }
+  .stat { display: flex; align-items: baseline; gap: 6px; }
+  .stat-value { font-size: 20px; font-weight: 700; color: #e4e4e7; }
+  .stat-label { font-size: 11px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; }
+  .stat-change { font-size: 11px; font-weight: 600; }
+  .stat-change.up { color: #22c55e; }
+
+  .viewtabs { display: flex; gap: 0; padding: 0 32px; border-bottom: 1px solid #1e2028; background: #0f1117; }
+  .viewtab { padding: 10px 18px; font-size: 12px; font-weight: 500; color: #6b7280; cursor: pointer; border-bottom: 2px solid transparent; }
+  .viewtab.active { color: #01aac1; border-bottom-color: #01aac1; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 18px; padding: 24px 32px; }
+
+  .card { background: #1a1d27; border-radius: 12px; border: 1px solid #2a2d37; overflow: hidden; transition: border-color 0.15s, transform 0.15s; }
+  .card:hover { border-color: #01aac1; transform: translateY(-2px); }
+
+  /* Video thumbnail */
+  .card-visual { position: relative; height: 200px; overflow: hidden; background: #000; }
+  .card-visual img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* Play button overlay */
+  .play-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 48px; height: 48px; border-radius: 50%; background: rgba(0,0,0,0.55); border: 2px solid rgba(255,255,255,0.25); display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); opacity: 0; transition: opacity 0.2s; }
+  .card:hover .play-btn { opacity: 1; }
+  .play-icon { width: 0; height: 0; border-style: solid; border-width: 8px 0 8px 14px; border-color: transparent transparent transparent rgba(255,255,255,0.9); margin-left: 3px; }
+
+  /* Video progress bar */
+  .progress-bar { position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: rgba(255,255,255,0.1); }
+  .progress-fill { height: 100%; background: #01aac1; }
+
+  /* Badges on thumbnail */
+  .score-badge { position: absolute; top: 10px; right: 10px; padding: 4px 10px; border-radius: 6px; font-size: 13px; font-weight: 700; }
+  .score-high { background: rgba(34,197,94,0.2); color: #22c55e; backdrop-filter: blur(4px); }
+  .score-mid { background: rgba(234,179,8,0.2); color: #eab308; backdrop-filter: blur(4px); }
+  .source-badge { position: absolute; top: 10px; left: 10px; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; backdrop-filter: blur(4px); }
+  .source-winner { background: rgba(34,197,94,0.25); color: #22c55e; }
+  .source-interview { background: rgba(99,102,241,0.25); color: #818cf8; }
+  .source-webinar { background: rgba(236,72,153,0.25); color: #f472b6; }
+  .source-competitor { background: rgba(251,146,60,0.25); color: #fb923c; }
+  .duration-badge { position: absolute; bottom: 8px; right: 10px; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; background: rgba(0,0,0,0.75); color: #e4e4e7; }
+
+  /* Lower third on video */
+  .lower-third { position: absolute; bottom: 8px; left: 10px; }
+  .lt-name { display: inline-block; padding: 2px 8px; background: rgba(1,170,193,0.85); color: #fff; font-size: 10px; font-weight: 700; border-radius: 3px 3px 0 0; }
+  .lt-title { display: block; padding: 2px 8px; background: rgba(0,0,0,0.7); color: #a1a1aa; font-size: 9px; border-radius: 0 3px 3px 3px; }
+
+  .card-body { padding: 14px 16px; }
+  .card-title { font-size: 14px; font-weight: 600; color: #e4e4e7; margin-bottom: 4px; line-height: 1.3; }
+  .card-source { font-size: 11px; color: #6b7280; margin-bottom: 10px; }
+  .card-hook { font-size: 12px; color: #94a3b8; line-height: 1.4; margin-bottom: 12px; padding: 8px 10px; background: #13151c; border-radius: 6px; border-left: 3px solid #01aac1; }
+
+  .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+  .tag { padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 500; }
+  .tag-hook { background: rgba(1,170,193,0.12); color: #01d7f4; }
+  .tag-platform { background: rgba(99,102,241,0.12); color: #a5b4fc; }
+  .tag-emotion { background: rgba(251,146,60,0.12); color: #fdba74; }
+  .tag-funnel { background: rgba(34,197,94,0.12); color: #86efac; }
+  .tag-status { background: rgba(236,72,153,0.12); color: #f9a8d4; }
+  .tag-angle { background: rgba(196,160,138,0.12); color: #C4A08A; }
+
+  .experiment-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; background: rgba(1,170,193,0.08); border: 1px solid rgba(1,170,193,0.2); color: #01aac1; margin-top: 6px; }
+
+  .card-footer { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border-top: 1px solid #2a2d37; }
+  .card-perf { display: flex; gap: 12px; }
+  .perf-item { display: flex; align-items: center; gap: 4px; font-size: 11px; color: #6b7280; }
+  .perf-item strong { color: #e4e4e7; }
+  .perf-item.winner { color: #22c55e; }
+  .perf-item.winner strong { color: #22c55e; }
+  .card-actions { display: flex; gap: 6px; }
+  .action-btn { width: 28px; height: 28px; border-radius: 6px; border: 1px solid #2a2d37; background: #13151c; color: #6b7280; display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; }
+
+  .section-header { grid-column: 1 / -1; display: flex; align-items: center; gap: 12px; padding: 8px 0 4px; }
+  .section-header h3 { font-size: 13px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; }
+  .section-header .line { flex: 1; height: 1px; background: #2a2d37; }
+  .section-header .count { font-size: 11px; color: #52525b; }
+
+  .watermark { text-align: center; padding: 32px; color: #2a2d37; font-size: 11px; }
+  .watermark strong { color: #3f3f46; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="logo">NOVASTACKS <span>/ Creative Library</span></div>
+    <div class="breadcrumb">Pipedrive &rsaquo; <strong>All Assets</strong></div>
+  </div>
+  <div class="topbar-right">
+    <button class="btn-sm active">Gallery</button>
+    <button class="btn-sm">Table</button>
+    <button class="btn-sm">Kanban</button>
+    <button class="btn-sm">+ Add Asset</button>
+  </div>
+</div>
+
+<div class="filterbar">
+  <span class="filter-chip selected"><span class="dot" style="background:#818cf8"></span> Interviews</span>
+  <span class="filter-chip"><span class="dot" style="background:#f472b6"></span> Webinars</span>
+  <span class="filter-chip"><span class="dot" style="background:#fb923c"></span> Competitors</span>
+  <span class="filter-chip selected"><span class="dot" style="background:#22c55e"></span> Winners</span>
+  <span class="filter-chip"><span class="dot" style="background:#ef4444"></span> Underperformers</span>
+  <span class="filter-chip">Hook: Direct Quote</span>
+  <span class="filter-chip">Hook: Contrarian</span>
+  <span class="filter-chip">Hook: Open Loop</span>
+  <span class="filter-chip">YouTube Shorts</span>
+  <span class="filter-chip">LinkedIn</span>
+  <input type="text" class="search-box" placeholder="Search by transcript, emotion, hook type...">
+</div>
+
+<div class="statsbar">
+  <div class="stat"><span class="stat-value">47</span><span class="stat-label">Total Assets</span></div>
+  <div class="stat"><span class="stat-value">23</span><span class="stat-label">Winning Patterns</span><span class="stat-change up">+8 this month</span></div>
+  <div class="stat"><span class="stat-value">2.4x</span><span class="stat-label">Top Hook Multiplier</span></div>
+  <div class="stat"><span class="stat-value">14</span><span class="stat-label">Active Experiments</span></div>
+  <div class="stat"><span class="stat-value">6</span><span class="stat-label">Competitors Tracked</span></div>
+</div>
+
+<div class="viewtabs">
+  <div class="viewtab active">All Assets</div>
+  <div class="viewtab">Winning Hooks</div>
+  <div class="viewtab">By Platform</div>
+  <div class="viewtab">By Experiment</div>
+  <div class="viewtab">Competitor Reference</div>
+  <div class="viewtab">What We Never Do</div>
+</div>
+
+<div class="grid">
+
+  <!-- Section: Winning Patterns -->
+  <div class="section-header">
+    <h3>Winning Patterns — Validated</h3>
+    <div class="line"></div>
+    <div class="count">8 assets</div>
+  </div>
+
+  <!-- Card 1: Sean Evers — moment 1 -->
+  <div class="card">
+    <div class="card-visual">
+      <img src="img/sean-m1.jpg" alt="Sean Evers">
+      <div class="play-btn"><div class="play-icon"></div></div>
+      <span class="source-badge source-winner">Winner</span>
+      <span class="score-badge score-high">7.9</span>
+      <span class="duration-badge">0:30</span>
+      <div class="lower-third">
+        <span class="lt-name">Sean Evers</span>
+        <span class="lt-title">VP Sales, Pipedrive</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:68%"></div></div>
+    </div>
+    <div class="card-body">
+      <div class="card-title">Sean Evers — Vulnerability Hook</div>
+      <div class="card-source">The Pipedrive Ep5 &bull; Feb 2026 &bull; 5:54 source</div>
+      <div class="card-hook">"My wife told me to stop kicking a football and get a proper job." — Personal vulnerability → career pivot → sales leadership. 30s standalone moment.</div>
+      <div class="tags">
+        <span class="tag tag-hook">Direct Quote</span>
+        <span class="tag tag-hook">Vulnerability</span>
+        <span class="tag tag-platform">YT Shorts</span>
+        <span class="tag tag-platform">LinkedIn Video</span>
+        <span class="tag tag-emotion">Trust</span>
+        <span class="tag tag-funnel">Awareness</span>
+      </div>
+      <div class="experiment-badge">&#9658; EXP-014: Direct-quote vs. bold-claim — CONCLUDED: 2.4x on Shorts</div>
+    </div>
+    <div class="card-footer">
+      <div class="card-perf">
+        <div class="perf-item winner"><strong>2.4x</strong> vs avg</div>
+        <div class="perf-item"><strong>68%</strong> watch-through</div>
+        <div class="perf-item"><strong>4.2%</strong> engagement</div>
+      </div>
+      <div class="card-actions">
+        <button class="action-btn" title="Copy to brief">&#128203;</button>
+        <button class="action-btn" title="View variants">&#9783;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2: Daniel Disney — moment 1 -->
+  <div class="card">
+    <div class="card-visual">
+      <img src="img/daniel-m1.jpg" alt="Daniel Disney">
+      <div class="play-btn"><div class="play-icon"></div></div>
+      <span class="source-badge source-winner">Winner</span>
+      <span class="score-badge score-high">7.7</span>
+      <span class="duration-badge">0:29</span>
+      <div class="lower-third">
+        <span class="lt-name">Daniel Disney</span>
+        <span class="lt-title">1M LinkedIn Followers</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:72%"></div></div>
+    </div>
+    <div class="card-body">
+      <div class="card-title">Daniel Disney — Contrarian Insight</div>
+      <div class="card-source">The Pipedrive Ep4 &bull; Feb 2026 &bull; 6:20 source</div>
+      <div class="card-hook">"Most companies use social media to sell. I use it to build a million followers." — Contrarian flip. Co-marketing: Daniel reshares to 1M audience.</div>
+      <div class="tags">
+        <span class="tag tag-hook">Contrarian</span>
+        <span class="tag tag-hook">Authority</span>
+        <span class="tag tag-platform">LinkedIn Video</span>
+        <span class="tag tag-platform">LinkedIn Carousel</span>
+        <span class="tag tag-emotion">Aspiration</span>
+        <span class="tag tag-angle">Social Selling</span>
+      </div>
+      <div class="experiment-badge">&#9658; EXP-009: Contrarian hooks on LinkedIn — CONCLUDED: 1.8x engagement</div>
+    </div>
+    <div class="card-footer">
+      <div class="card-perf">
+        <div class="perf-item winner"><strong>1.8x</strong> vs avg</div>
+        <div class="perf-item"><strong>72%</strong> watch-through</div>
+        <div class="perf-item"><strong>5.1%</strong> engagement</div>
+      </div>
+      <div class="card-actions">
+        <button class="action-btn" title="Copy to brief">&#128203;</button>
+        <button class="action-btn" title="View variants">&#9783;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 3: Hazel Edwards -->
+  <div class="card">
+    <div class="card-visual">
+      <img src="img/hazel-m1.jpg" alt="Hazel Edwards">
+      <div class="play-btn"><div class="play-icon"></div></div>
+      <span class="source-badge source-interview">Interview</span>
+      <span class="score-badge score-high">7.6</span>
+      <span class="duration-badge">0:32</span>
+      <div class="lower-third">
+        <span class="lt-name">Hazel Edwards</span>
+        <span class="lt-title">Founder, Container Team</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+    </div>
+    <div class="card-body">
+      <div class="card-title">Hazel Edwards — Origin Story Hook</div>
+      <div class="card-source">The Pipedrive Ep1 &bull; Feb 2026 &bull; 5:01 source</div>
+      <div class="card-hook">"Our youngest has Down syndrome. We couldn't be the parents we wanted and keep our careers." — Highest viral potential on LinkedIn. Founder story angle.</div>
+      <div class="tags">
+        <span class="tag tag-hook">Origin Story</span>
+        <span class="tag tag-hook">Emotional</span>
+        <span class="tag tag-platform">LinkedIn Video</span>
+        <span class="tag tag-platform">YT Shorts</span>
+        <span class="tag tag-platform">IG Reel</span>
+        <span class="tag tag-emotion">Vulnerability</span>
+        <span class="tag tag-funnel">Awareness</span>
+      </div>
+      <div class="experiment-badge">&#9650; EXP-018: Emotional origin stories vs. tactical insights — IN PROGRESS</div>
+    </div>
+    <div class="card-footer">
+      <div class="card-perf">
+        <div class="perf-item"><strong>--</strong> pending</div>
+        <div class="perf-item"><strong>--</strong> pending</div>
+        <div class="perf-item"><strong>--</strong> pending</div>
+      </div>
+      <div class="card-actions">
+        <button class="action-btn" title="Copy to brief">&#128203;</button>
+        <button class="action-btn" title="View variants">&#9783;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 4: Sean Evers moment 3 -->
+  <div class="card">
+    <div class="card-visual">
+      <img src="img/sean-m3.jpg" alt="Sean Evers moment 3">
+      <div class="play-btn"><div class="play-icon"></div></div>
+      <span class="source-badge source-interview">Interview</span>
+      <span class="score-badge score-high">7.4</span>
+      <span class="duration-badge">0:45</span>
+      <div class="lower-third">
+        <span class="lt-name">Sean Evers</span>
+        <span class="lt-title">VP Sales, Pipedrive</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:61%"></div></div>
+    </div>
+    <div class="card-body">
+      <div class="card-title">Sean Evers — Team Building Insight</div>
+      <div class="card-source">The Pipedrive Ep5 &bull; Feb 2026 &bull; Moment 3</div>
+      <div class="card-hook">"The best salespeople aren't lone wolves. They're the ones who make everyone around them better." — Leadership insight, B2B resonance.</div>
+      <div class="tags">
+        <span class="tag tag-hook">Authority</span>
+        <span class="tag tag-hook">Insight</span>
+        <span class="tag tag-platform">LinkedIn Video</span>
+        <span class="tag tag-platform">YT Clips</span>
+        <span class="tag tag-emotion">Trust</span>
+        <span class="tag tag-funnel">Consideration</span>
+      </div>
+    </div>
+    <div class="card-footer">
+      <div class="card-perf">
+        <div class="perf-item"><strong>1.3x</strong> vs avg</div>
+        <div class="perf-item"><strong>61%</strong> watch-through</div>
+        <div class="perf-item"><strong>3.1%</strong> engagement</div>
+      </div>
+      <div class="card-actions">
+        <button class="action-btn" title="Copy to brief">&#128203;</button>
+        <button class="action-btn" title="View variants">&#9783;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section: Webinar Content -->
+  <div class="section-header">
+    <h3>Webinar Source — Processing Queue</h3>
+    <div class="line"></div>
+    <div class="count">8 moments identified</div>
+  </div>
+
+  <!-- Card 5: Webinar moment 1 -->
+  <div class="card">
+    <div class="card-visual">
+      <img src="img/webinar-m1.jpg" alt="Webinar automations">
+      <div class="play-btn"><div class="play-icon"></div></div>
+      <span class="source-badge source-webinar">Webinar</span>
+      <span class="score-badge score-mid">5.8</span>
+      <span class="duration-badge">1:20</span>
+      <div class="lower-third">
+        <span class="lt-name">Unlock Automations</span>
+        <span class="lt-title">Pipedrive Webinar &bull; Feb 2026</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+    </div>
+    <div class="card-body">
+      <div class="card-title">Automations Webinar — Demo Highlight</div>
+      <div class="card-source">Livestorm &bull; Feb 2026 &bull; 52 min source &bull; Screen-share dominant</div>
+      <div class="card-hook">Pipeline automation setup walkthrough. Screen-share dominant — routes to blog screenshots and step-by-step guide, not social video. Low visual variety.</div>
+      <div class="tags">
+        <span class="tag tag-hook">Tutorial</span>
+        <span class="tag tag-platform">Blog Embed</span>
+        <span class="tag tag-platform">YT Clip (16:9)</span>
+        <span class="tag tag-emotion">Utility</span>
+        <span class="tag tag-funnel">Consideration</span>
+        <span class="tag tag-angle">Automation</span>
+      </div>
+    </div>
+    <div class="card-footer">
+      <div class="card-perf">
+        <div class="perf-item"><strong>--</strong> queued</div>
+        <div class="perf-item"><strong>--</strong> queued</div>
+        <div class="perf-item"><strong>--</strong> queued</div>
+      </div>
+      <div class="card-actions">
+        <button class="action-btn" title="Copy to brief">&#128203;</button>
+        <button class="action-btn" title="View moments">&#9783;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 6: Webinar moment 4 -->
+  <div class="card">
+    <div class="card-visual">
+      <img src="img/webinar-m4.jpg" alt="Webinar automations moment 4">
+      <div class="play-btn"><div class="play-icon"></div></div>
+      <span class="source-badge source-webinar">Webinar</span>
+      <span class="score-badge score-mid">4.6</span>
+      <span class="duration-badge">2:10</span>
+      <div class="lower-third">
+        <span class="lt-name">Unlock Automations</span>
+        <span class="lt-title">Pipedrive Webinar &bull; Feb 2026</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+    </div>
+    <div class="card-body">
+      <div class="card-title">Automations Webinar — Q&A Segment</div>
+      <div class="card-source">Livestorm &bull; Feb 2026 &bull; Speaker segment</div>
+      <div class="card-hook">Speaker answers "What's the #1 automation every sales team should set up?" — Good for blog post + "did you know?" Short with AI B-roll overlay.</div>
+      <div class="tags">
+        <span class="tag tag-hook">Q&A Extract</span>
+        <span class="tag tag-platform">Blog Embed</span>
+        <span class="tag tag-platform">YT Shorts (w/ B-roll)</span>
+        <span class="tag tag-emotion">Utility</span>
+        <span class="tag tag-funnel">Decision</span>
+        <span class="tag tag-angle">Automation</span>
+      </div>
+    </div>
+    <div class="card-footer">
+      <div class="card-perf">
+        <div class="perf-item"><strong>--</strong> queued</div>
+        <div class="perf-item"><strong>--</strong> queued</div>
+        <div class="perf-item"><strong>--</strong> queued</div>
+      </div>
+      <div class="card-actions">
+        <button class="action-btn" title="Copy to brief">&#128203;</button>
+        <button class="action-btn" title="View moments">&#9783;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section: Playbook Patterns -->
+  <div class="section-header">
+    <h3>Playbook Patterns — Validated Rules</h3>
+    <div class="line"></div>
+    <div class="count">23 entries</div>
+  </div>
+
+  <!-- Playbook: Winner -->
+  <div class="card" style="border-left: 3px solid #22c55e;">
+    <div class="card-body">
+      <div class="card-title" style="color: #22c55e;">PATTERN: Direct-Quote Hooks on YouTube Shorts</div>
+      <div class="card-source">Validated across 6 data points &bull; Confidence: High &bull; Mar 15, 2026</div>
+      <div class="card-hook">Direct-quote hooks from named external experts outperform bold-claim hooks by 2.4x on YouTube Shorts. Effect strongest with personal vulnerability or contrarian insight. Does NOT hold for product demos or tutorials.</div>
+      <div class="tags">
+        <span class="tag tag-hook">Direct Quote</span>
+        <span class="tag tag-platform">YT Shorts</span>
+        <span class="tag tag-emotion">Vulnerability</span>
+      </div>
+      <div style="margin-top: 8px; font-size: 11px; color: #6b7280;">Evidence: EXP-014, EXP-017, EXP-021 &bull; Assets: Sean Evers, Daniel Disney, Troy Stevens</div>
+    </div>
+  </div>
+
+  <!-- Playbook: Winner -->
+  <div class="card" style="border-left: 3px solid #22c55e;">
+    <div class="card-body">
+      <div class="card-title" style="color: #22c55e;">PATTERN: Video Posts on LinkedIn > Image Posts</div>
+      <div class="card-source">Validated across 8 data points &bull; Confidence: High &bull; Mar 12, 2026</div>
+      <div class="card-hook">LinkedIn video posts (1:1 or 16:9, 60-90s) with thought leadership drive 3.2x more engagement than current image + text employer branding. Compounds when paired with a named individual (not brand voice).</div>
+      <div class="tags">
+        <span class="tag tag-hook">Format Shift</span>
+        <span class="tag tag-platform">LinkedIn</span>
+        <span class="tag tag-angle">Thought Leadership</span>
+      </div>
+      <div style="margin-top: 8px; font-size: 11px; color: #6b7280;">Evidence: EXP-003, EXP-007, EXP-011, EXP-019 &bull; Baseline: 30 eng/post → 96 eng/post</div>
+    </div>
+  </div>
+
+  <!-- Playbook: Never Do -->
+  <div class="card" style="border-left: 3px solid #ef4444;">
+    <div class="card-body">
+      <div class="card-title" style="color: #ef4444;">NEVER: Generic Product Feature Announcements</div>
+      <div class="card-source">Validated across 5 data points &bull; Confidence: High &bull; Mar 8, 2026</div>
+      <div class="card-hook">Generic "new feature" posts with product screenshots consistently underperform by 0.3x vs. average. Wrap features in a customer use case or problem-solution narrative — never lead with the feature name.</div>
+      <div class="tags">
+        <span class="tag tag-status">What We Never Do</span>
+        <span class="tag tag-platform">All Platforms</span>
+      </div>
+      <div style="margin-top: 8px; font-size: 11px; color: #6b7280;">Evidence: EXP-005, EXP-008 &bull; Avg engagement: 12 (vs. 42 baseline)</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="watermark">
+  <strong>MOCKUP</strong> — Pipedrive Creative Library concept by Novastacks AI &bull; Real thumbnails from produced content &bull; Built on Airtable + custom intelligence layer
+</div>
+
+</body>
+</html>
